@@ -63,7 +63,7 @@ func SearchTicker(ticker string) []Stock {
 	data := SearchResult{}
 
 	// json.Unmarshal([]byte(string(body)), &data)
-	json.Unmarshal([]byte(string(body)), &data)
+	json.Unmarshal([]byte(body), &data)
 
 	fmt.Println("Line 68: ", data)
 	return data.Results
@@ -75,7 +75,7 @@ func GetDailyValues(ticker string) Values {
 	fmt.Println(DailyValuesPath + strings.ToUpper(ticker) + "/" + getCurrentDate() + "/?adjusted=true&apiKey=" + ApiKey)
 	fmt.Println("Line 76: " + body)
 	data := Values{}
-	json.Unmarshal([]byte(string(body)), &data)
+	json.Unmarshal([]byte(body), &data)
 	// fmt.Println(data)
 	fmt.Println("Line 80: " + fmt.Sprintf("%v", data))
 	return data

@@ -19,7 +19,7 @@ const DailyValuesPath = PoligonPath + "v1/open-close/"
 
 type Stock struct {
 	Ticker string `json:"ticker"`
-	Name   string `json:"name"`
+	// Name   string `json:"name"`
 }
 
 type SearchResult struct {
@@ -27,12 +27,12 @@ type SearchResult struct {
 }
 
 type Values struct {
-	Symbol     string  `json:"symbol"`
-	Open       float64 `json:"open"`
-	High       float64 `json:"high"`
-	Low        float64 `json:"low"`
-	Close      float64 `json:"close"`
-	AfterHours float64 `json:"afterHours"`
+	Symbol string  `json:"ticker"`
+	Open   float64 `json:"results[0].o"`
+	High   float64 `json:"results[0].h"`
+	Low    float64 `json:"results[0].l"`
+	Close  float64 `json:"results[0].c"`
+	// AfterHours float64 `json:"afterHours"`
 }
 
 func getCurrentDate() string {

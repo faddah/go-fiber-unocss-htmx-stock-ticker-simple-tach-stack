@@ -37,7 +37,7 @@ type Values struct {
 
 func getCurrentDate() string {
 	currentTime := time.Now()
-	dayBefore := currentTime.AddDate(0, 0, -1)
+	dayBefore := currentTime.AddDate(0, 0, -3)
 	return dayBefore.Format("2006-01-02")
 }
 
@@ -58,7 +58,9 @@ func Fetch(path string) string {
 func SearchTicker(ticker string) []Stock {
 	// body := Fetch(TickerPath + "?" + ApiKey + "&ticker=" + strings.ToUpper(ticker))
 	// fmt.Println(TickerPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "/?apiKey=" + ApiKey)
+	// fetchURL := fmt.Sprintf("%v?ticker=%v&apiKey=%v", TickerPath, strings.ToUpper(ticker), ApiKey)
 	body := Fetch(TickerPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "/?apiKey=" + ApiKey)
+	// body := Fetch(fetchURL)
 	fmt.Println("Line 62: " + body)
 	data := SearchResult{}
 

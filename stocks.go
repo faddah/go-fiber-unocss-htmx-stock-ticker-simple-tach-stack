@@ -61,7 +61,7 @@ func Fetch(path string) string {
 
 func SearchTicker(ticker string) []Stock {
 	body := Fetch(TickerPath + strings.ToUpper(ticker) + "?apiKey=" + ApiKey)
-	fmt.Printf("Line 65: %v\n", body)
+	fmt.Printf("Line 64: %v\n", body)
 
 	var data []Stock
 

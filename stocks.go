@@ -11,28 +11,32 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 )
 
-const PoligonPath = "https://api.polygon.io/"
-const ApiKey = "vLcR3SaJGTOsLucDg_s2E2BDfjnjaVyO"
-
-const TickerPath = PoligonPath + "v2/aggs/ticker/"
-const DailyValuesPath = PoligonPath + "v1/open-close/"
+const (
+	PoligonPath = "https://api.polygon.io/"
+	ApiKey      = "vLcR3SaJGTOsLucDg_s2E2BDfjnjaVyO"
+	// TickerPath      = PoligonPath + "v2/aggs/?ticker="
+	TickerPath      = PoligonPath + "v3/reference/tickers/"
+	DailyValuesPath = PoligonPath + "v2/aggs/ticker/"
+)
 
 type Stock struct {
 	Ticker string `json:"ticker"`
-	// Name   string `json:"name"`
+	Name   string `json:"name"`
+	// Price  float64 `json:"price"`
 }
 
 type SearchResult struct {
-	Results []Stock `json:"results"`
+	Stocks []Stock `json:"stocks"`
 }
 
 type Values struct {
-	Symbol string  `json:"ticker"`
-	Open   float64 `json:"results[0].o"`
-	High   float64 `json:"results[0].h"`
-	Low    float64 `json:"results[0].l"`
-	Close  float64 `json:"results[0].c"`
-	// AfterHours float64 `json:"afterHours"`
+	Ticker string    `json:"ticker"`
+	Date   time.Time `json:"results[0].t"`
+	Open   float64   `json:"results[0].o"`
+	Close  float64   `json:"results[0].c"`
+	High   float64   `json:"results[0].h"`
+	Low    float64   `json:"results[0].l"`
+	Volume int       `json:"results[0].v"`
 }
 
 func getCurrentDate() string {
@@ -44,41 +48,36 @@ func getCurrentDate() string {
 func Fetch(path string) string {
 	resp, err := http.Get(path)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Got Error doing a REST GET with that URL path with this: %v", err)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Got Error on returned Response Body with: %v", err)
 	}
 
 	return string(body)
 }
 
 func SearchTicker(ticker string) []Stock {
-	// body := Fetch(TickerPath + "?" + ApiKey + "&ticker=" + strings.ToUpper(ticker))
-	// fmt.Println(TickerPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "/?apiKey=" + ApiKey)
-	// fetchURL := fmt.Sprintf("%v?ticker=%v&apiKey=%v", TickerPath, strings.ToUpper(ticker), ApiKey)
-	body := Fetch(TickerPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "/?apiKey=" + ApiKey)
-	// body := Fetch(fetchURL)
-	fmt.Println("Line 62: " + body)
-	data := SearchResult{}
+	body := Fetch(TickerPath + strings.ToUpper(ticker) + "?apiKey=" + ApiKey)
+	fmt.Println("Line 65: " + body)
 
-	// json.Unmarshal([]byte(string(body)), &data)
+	var data []Stock
+
 	json.Unmarshal([]byte(body), &data)
 
-	fmt.Println("Line 68: ", data)
-	return data.Results
+	fmt.Println("Unmarshalled Data Line 68:\n %v", data)
+	return data
 }
 
-func GetDailyValues(ticker string) Values {
-	// body := Fetch(DailyValuesPath + "/" + strings.ToUpper(ticker) + "/2023-09-15/?" + ApiKey)
-	body := Fetch(DailyValuesPath + strings.ToUpper(ticker) + "/" + getCurrentDate() + "/?adjusted=true&apiKey=" + ApiKey)
-	fmt.Println(DailyValuesPath + strings.ToUpper(ticker) + "/" + getCurrentDate() + "/?adjusted=true&apiKey=" + ApiKey)
-	fmt.Println("Line 76: " + body)
-	data := Values{}
+func GetDailyValues(ticker string) []Values {
+	// https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2024-08-30/2024-08-30?apiKey=vLcR3SaJGTOsLucDg_s2E2BDfjnjaVyO
+	body := Fetch(DailyValuesPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "?apiKey=" + ApiKey)
+	fmt.Println(DailyValuesPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "?apiKey=" + ApiKey)
+	fmt.Println("Line 78: " + body)
+	var data []Values
 	json.Unmarshal([]byte(body), &data)
-	// fmt.Println(data)
-	fmt.Println("Line 80: " + fmt.Sprintf("%v", data))
+	fmt.Println("Line 81: " + fmt.Sprintf("%v", data))
 	return data
 }

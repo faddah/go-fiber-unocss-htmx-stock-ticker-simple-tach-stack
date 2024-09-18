@@ -26,11 +26,7 @@ func main() {
 
 	app.Get("/search", func(c fiber.Ctx) error {
 		ticker := c.Query("ticker")
-		stockData, err := fetchStockData(ticker)
-		if err != nil {
-			// Handle the error
-			return err
-		}
+		stockData := SearchTicker(ticker)
 
 		return c.Render("results", fiber.Map{"Results": stockData})
 	})
@@ -38,6 +34,7 @@ func main() {
 	app.Get("/values/:ticker", func(c fiber.Ctx) error {
 		ticker := c.Params("ticker")
 		Values := GetDailyValues(ticker)
+
 		return c.Render("values", fiber.Map{
 			"Ticker": ticker,
 			"Values": Values,

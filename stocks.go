@@ -61,13 +61,13 @@ func Fetch(path string) string {
 
 func SearchTicker(ticker string) []Stock {
 	body := Fetch(TickerPath + strings.ToUpper(ticker) + "?apiKey=" + ApiKey)
-	fmt.Println("Line 65: %v\n", body)
+	fmt.Printf("Line 65: %v\n", body)
 
 	var data []Stock
 
 	json.Unmarshal([]byte(body), &data)
 
-	fmt.Println("Unmarshalled Data Line 68: %v\n", data)
+	fmt.Println("Unmarshalled Data Line 68:", data)
 	return data
 }
 

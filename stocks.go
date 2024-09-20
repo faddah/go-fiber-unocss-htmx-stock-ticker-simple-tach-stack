@@ -60,6 +60,8 @@ func Fetch(path string) string {
 }
 
 func SearchTicker(ticker string) []Stock {
+	fmt.Println(TickerPath + strings.ToUpper(ticker) + "?apiKey=" + ApiKey + "\n")
+	fmt.Println(DailyValuesPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "?apiKey=" + ApiKey + "\n")
 	body := Fetch(TickerPath + strings.ToUpper(ticker) + "?apiKey=" + ApiKey)
 	fmt.Printf("Line 64: %v\n", body)
 
@@ -73,8 +75,8 @@ func SearchTicker(ticker string) []Stock {
 
 func GetDailyValues(ticker string) []Values {
 	// https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2024-08-30/2024-08-30?apiKey=vLcR3SaJGTOsLucDg_s2E2BDfjnjaVyO
-	body := Fetch(DailyValuesPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "?apiKey=" + ApiKey)
 	fmt.Println(DailyValuesPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "?apiKey=" + ApiKey)
+	body := Fetch(DailyValuesPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "?apiKey=" + ApiKey)
 	fmt.Printf("Line 78: %v\n", body)
 	var data []Values
 	json.Unmarshal([]byte(body), &data)

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/template/html/v2"
 )
@@ -28,7 +30,11 @@ func main() {
 		ticker := c.Query("ticker")
 		stockData := SearchTicker(ticker)
 
-		return c.Render("results", fiber.Map{"Results": stockData})
+		err := c.Render("results", fiber.Map{"Results": stockData})
+		if err != nil {
+			fmt.Println("Error rendering results: ", err)
+		}
+		return err
 	})
 
 	app.Get("/values/:ticker", func(c fiber.Ctx) error {

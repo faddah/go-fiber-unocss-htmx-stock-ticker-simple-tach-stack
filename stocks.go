@@ -20,9 +20,11 @@ const (
 )
 
 type Stock struct {
-	Ticker string `json:"ticker"`
-	Name   string `json:"name"`
-	// Price  float64 `json:"price"`
+	Results struct {
+		Ticker string `json:"ticker"`
+		Name   string `json:"name"`
+		// Price  float64 `json:"price"`
+	} `json:"results"`
 }
 
 type SearchResult struct {
@@ -30,13 +32,15 @@ type SearchResult struct {
 }
 
 type Values struct {
-	Ticker string    `json:"ticker"`
-	Date   time.Time `json:"results[0].t"`
-	Open   float64   `json:"results[0].o"`
-	Close  float64   `json:"results[0].c"`
-	High   float64   `json:"results[0].h"`
-	Low    float64   `json:"results[0].l"`
-	Volume int       `json:"results[0].v"`
+	Ticker  string `json:"ticker"`
+	Results []struct {
+		Date   string  `json:"t"`
+		Open   float64 `json:"o"`
+		Close  float64 `json:"c"`
+		High   float64 `json:"h"`
+		Low    float64 `json:"l"`
+		Volume int     `json:"v"`
+	} `json:"results.0"`
 }
 
 func getCurrentDate() string {
@@ -59,27 +63,36 @@ func Fetch(path string) string {
 	return string(body)
 }
 
-func SearchTicker(ticker string) []Stock {
+func SearchTicker(ticker string) Stock {
 	fmt.Println(TickerPath + strings.ToUpper(ticker) + "?apiKey=" + ApiKey + "\n")
 	fmt.Println(DailyValuesPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "?apiKey=" + ApiKey + "\n")
 	body := Fetch(TickerPath + strings.ToUpper(ticker) + "?apiKey=" + ApiKey)
 	fmt.Printf("Line 64: %v\n", body)
 
-	var data []Stock
+	var results Stock
 
-	json.Unmarshal([]byte(body), &data)
+	err := json.Unmarshal([]byte(body), &results)
+	if err != nil {
+		fmt.Println("\n= = = = Error unmarshalling JSON:", err)
+	} else {
+		fmt.Println("Unmarshalled Data Line 76:", results)
+	}
 
-	fmt.Println("Unmarshalled Data Line 68:", data)
-	return data
+	fmt.Printf("Unmarshalled Data Line 79: %#v", results)
+	return results
 }
 
 func GetDailyValues(ticker string) []Values {
 	// https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2024-08-30/2024-08-30?apiKey=vLcR3SaJGTOsLucDg_s2E2BDfjnjaVyO
 	fmt.Println(DailyValuesPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "?apiKey=" + ApiKey)
+	var values []Values
 	body := Fetch(DailyValuesPath + strings.ToUpper(ticker) + "/range/1/day/" + getCurrentDate() + "/" + getCurrentDate() + "?apiKey=" + ApiKey)
-	fmt.Printf("Line 78: %v\n", body)
-	var data []Values
-	json.Unmarshal([]byte(body), &data)
-	fmt.Printf("Line 81: %v\n", data)
-	return data
+	fmt.Printf("Line 89: %v\n", body)
+	err := json.Unmarshal([]byte(body), &values)
+	if err != nil {
+		fmt.Println("\n= = = = Error unmarshalling JSON:", err)
+	} else {
+		fmt.Printf("Line 92: %v\n", values)
+	}
+	return values
 }
